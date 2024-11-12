@@ -1,6 +1,19 @@
 import cv2
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+
+# Create a function to save histogram as an image
+def save_histogram(hist, title, filename):
+    plt.figure(figsize=(8, 4))
+    plt.bar(np.arange(256), hist, color='blue', width=1)  # Use bar for histogram
+    plt.title(title)
+    plt.xlim([0, 256])
+    plt.xlabel('Pixel value')
+    plt.ylabel('Frequency')
+    plt.grid()
+    plt.savefig(filename)
+    plt.close()
 
 
 # Define a function to create the Gaussian and Laplacian pyramid images in a structured layout
@@ -71,7 +84,13 @@ def process(image):
 
         # Update the vertical offset for the next level
         y_offset += g_width
-
+    
+    #计算并保存原图和第一张残差图的直方图
+    hist1, bin1 = np.histogram(image.flatten(), bins=256, range=[0, 256])
+    hist2, bin2 = np.histogram(display_images[0][1].flatten(), bins=256, range=[0, 256])
+    # Save the histograms
+    save_histogram(hist1, 'Original Image Histogram', 'result\\1-2.jpg')
+    save_histogram(hist2, 'First Residual Image Histogram', 'result\\1-3.jpg')
     return canvas
 
 
@@ -85,6 +104,6 @@ image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 result = process(image)
 
 # Save the result
-cv2.imwrite("result\\result1.jpg", result)
+cv2.imwrite("result\\1-1.jpg", result)
 
 
